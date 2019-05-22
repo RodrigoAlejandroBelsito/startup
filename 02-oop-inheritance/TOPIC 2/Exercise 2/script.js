@@ -1,16 +1,34 @@
 class EventEmitter {
-    func(event, logger) {
-        logger(event, "Triggered");
+
+    constructor () {
+      this.events = {}; 
     }
-    on(event, logger) {
-        document.addEventListener(event.type, this.func(event, logger));
+
+    on (eventName, callback) {
+      if (!this.events[eventName]) {
+        this.events[eventName] = [];
+      }
+      this.events[eventName].push(callback);
     }
-    emit(event) {
-        document.dispatchEvent(event);
+
+    emit(eventName) {
+        if (this.events[eventName]) {
+            this.events[eventName].forEach(cback => {
+                cback();
+            });
+        }
     }
-    off(event, logger) {
-        document.removeEventListener(event.type, this.func(event, logger))
-    }
+
+    off (eventName, callback) {
+        let ls = this.events[eventName]; 
+        if (ls) {
+          let i = ls.indexOf(callback);
+          if (i !== -1) {
+            ls.splice(i, 1);
+          }
+        }
+      }
+
 }
 
 class Actor {
