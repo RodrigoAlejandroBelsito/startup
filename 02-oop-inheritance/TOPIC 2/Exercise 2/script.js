@@ -19,7 +19,7 @@ class EventEmitter {
         }
     }
 
-    off (eventName, callback) {
+    /*off (eventName, callback) {
         let ls = this.events[eventName]; 
         if (ls) {
           let i = ls.indexOf(callback);
@@ -28,6 +28,18 @@ class EventEmitter {
           }
         }
       }
+    */
+      off (eventName, callback) {
+        let lis = this.events[eventName];
+        if (!lis) return this;
+            for(let i = lis.length; i > 0; i--) {
+                if (lis[i] === callback) {
+                    lis.splice(i,1);
+                    break;
+                }
+            }
+        return this;
+    }
 
 }
 
