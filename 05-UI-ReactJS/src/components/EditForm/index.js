@@ -1,6 +1,6 @@
 import React from "react";
 
-class AddForm extends React.Component {
+class EditForm extends React.Component {
     constructor(props){
         super(props);
         this.state={
@@ -9,10 +9,17 @@ class AddForm extends React.Component {
             duration: '',
         };
     }
+    componentDidMount(){        
+        this.setState({
+            title: this.props.movie.title,
+            year: this.props.movie.year,
+            duration: this.props.movie.duration,
+        });
+    }
     handleChange = (input, event) => {
         this.setState({
             [input]: event.target.value,
-        });
+        })
     }
     render() {
         return ( 
@@ -50,22 +57,17 @@ class AddForm extends React.Component {
                         }}
                     /> 
                 </div> 
-                <button 
+                <button
                     onClick={()=>{
-                        this.props.handleAdd(this.state)
-                        this.setState({
-                            title: '',
-                            year: '',
-                            duration: '',
-                        });
+                        this.props.handleConfirm(this.state, this.props.index)
                     }} 
                     type="button"
                 >
-                    Add Movie
-                </button> 
+                    Save Changes
+                </button>
             </form>
         );
     }
 }
 
-export default AddForm;
+export default EditForm;
