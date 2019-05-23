@@ -4,62 +4,31 @@ import AddForm from "./components/AddForm";
 import EditForm from "./components/EditForm";
 import Movie from "./components/Movie";
 
+import { connect } from 'react-redux';
+import * as Actions from './actions';
+import { bindActionCreators } from 'redux';
+
 class App extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            movies: [],
-            editing: false,
-            editIndex: null,
-        };
-    }
-    handleAdd = (movie) => {
-        const movies = this.state.movies.concat(movie);
-        this.setState({
-            movies,
-        }, () => {console.log(this.state.movies)})
-    }
-    handleEdit = (index) => {
-        this.setState({
-            editing: true,
-            editIndex: index,
-        });
-    }
-    handleConfirm = (movie) => {
-        const movies = this.state.movies;
-        movies[this.state.editIndex] = movie;
-        this.setState({
-            movies,
-            editing: false,
-        });
-    }
-    handleDelete = (index) => {
-        const movies = this.state.movies;
-        movies.splice(index, 1);
-        this.setState({
-            movies,
-            editing: false,
-        });
-    }
+
     renderMovieList = () => {
-        return this.state.movies.map((item, index) => (
+        return this.props.movies.map((item, index) => (
             <Movie
                 key={index}
                 id={index}
                 item={item}
-                handleEdit={this.handleEdit}
-                handleDelete={this.handleDelete}
-                editing={this.state.editing}
+                handleEdit={this.props.editMovie}
+                handleDelete={this.props.deleteMovie}
+                editing={this.props.editIndex != null}
             />
         ));
     }
 
     render() {
-        const Form = !this.state.editing ? 
-            <AddForm handleAdd={this.handleAdd} />: 
+        const Form = this.props.editIndex === null ? 
+            <AddForm handleAdd={this.props.addMovie} />: 
             <EditForm 
-                handleConfirm={this.handleConfirm}
-                movie={this.state.movies[this.state.editIndex]}
+                handleConfirm={this.props.confirmEdit}
+                movie={this.props.movies[this.props.editIndex]}
             />;
         return(
             <div>
@@ -70,4 +39,15 @@ class App extends React.Component {
     }
 }
 
-export default App;
+    const mapStateToProps = (state, props) => (
+        {
+            movies: state.simpleReducer.movies,
+            editIndex: state.simpleReducer.editIndex,
+        }
+    );
+  
+    const mapDispatchToProps = (dispatch) => (
+        bindActionCreators(Actions, dispatch)
+    );
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
